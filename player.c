@@ -1,0 +1,99 @@
+#include "player.h"
+#include "enemies.h"
+
+void UpdateMovementX(Player *P, float dt)
+{
+    if (IsKeyDown(KEY_A) && !P->dashing)
+    {
+        P->x -= P->speed * dt;
+        P->dashflag = -1;
+    }
+    if (IsKeyDown(KEY_D) && !P->dashing)
+    {
+
+        P->x += P->speed * dt;
+        P->dashflag = 1;
+    }
+}
+
+void UpdateDash(Player *P, float dt)
+{
+    if (IsKeyDown(KEY_LEFT_SHIFT) && !P->dashing && P->dashcooldown <= 0)
+    {
+        P->dashing = true;
+    }
+    if (P->dashing)
+    {
+        P->x += P->dashflag * 5000 * dt;
+        P->dashtimer -= dt;
+        if (P->dashtimer <= 0)
+        {
+            P->dashing = false;
+            P->dashcooldown = 1.0f;
+            P->dashtimer = 0.15f;
+        }
+    }
+    P->dashcooldown -= dt;
+    if (P->dashcooldown < 0)
+        P->dashcooldown = 0;
+}
+
+void UpdateJump(Player *P, float dt)
+{
+    // jump starts
+    if (P->onground && IsKeyPressed(KEY_SPACE))
+    {
+        P->velocityY = -3000.0f;
+        P->onground = false;
+    }
+    else if (!P->onground && P->doublejump && IsKeyPressed(KEY_SPACE))
+    {
+        P->velocityY = -3000.0f;
+        P->doublejump = false;
+    }
+    // jump ends
+}
+
+void UpdateGravity(Player *P, float dt)
+{
+    // Y movement starts
+    P->velocityY += P->gravity * dt;
+    P->y += P->velocityY * dt;
+    P->onground = false;
+    // y movement ends
+}
+
+void UpdateBullGravity(Bull *B, float dt)
+{
+    B->velocityY += B->gravity * dt;
+    B->y += B->velocityY * dt;
+}
+int UpdateAttack(Player *P, float dt, Rectangle *AttackRect)
+{
+    P->attackcooldown -= dt;
+    if (P->attackcooldown <= 0)
+    {
+        P->attackcooldown = 0;
+    }
+    if (IsKeyPressed(KEY_BACKSPACE) && P->attackcooldown <= 0)
+    {
+        P->attackcooldown = .25;
+        if (P->dashflag == -1)
+        {
+            AttackRect->x = P->x - 200;
+            AttackRect->y = P->y;
+            AttackRect->height = 200;
+            AttackRect->width = 200;
+        }
+        if (P->dashflag == 1)
+        {
+            AttackRect->x = P->x + 100;
+            AttackRect->y = P->y;
+            AttackRect->height = 200;
+            AttackRect->width = 200;
+        }
+        return 1;
+    }
+    else
+        return 0;
+}
