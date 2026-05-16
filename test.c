@@ -66,6 +66,8 @@ int main(void)
     float timer = 1;
 
     InitWindow(1440, 1080, "Title:The Name");
+    SetExitKey(KEY_DELETE);
+    HideCursor();
     ToggleFullscreen();
     int screen_h = GetScreenHeight();
     int screen_w = GetScreenWidth();
@@ -84,12 +86,27 @@ int main(void)
             if (IsKeyPressed(KEY_ENTER))
                 state = Playing;
             BeginDrawing();
-            DrawText("Press enter to start", screen_w/2-500, screen_h/2, 100, RED);
             ClearBackground(BLACK);
+            DrawText("Press enter to start", screen_w / 2 - 500, screen_h / 2, 100, RED);
+            EndDrawing();
+        }
+        if (state == Pausemenu)
+        {
+            if (IsKeyPressed(KEY_ENTER))
+                state = Playing;
+            if (IsKeyPressed(KEY_ESCAPE))
+                state = Mainmenu;
+            BeginDrawing();
+            ClearBackground(BLACK);
+            DrawText(TextFormat("This is a Pause menu"), screen_w / 2 - 600, screen_h / 2 - 200, 100, RED);
+            DrawText(TextFormat("Press esc to go to the main menu\nPress enter to continue"), screen_w / 2 - 600, screen_h / 2, 50, RED);
             EndDrawing();
         }
         if (state == Playing)
         {
+            if (IsKeyPressed(KEY_ESCAPE))
+                state = Pausemenu;
+
             float dt = GetFrameTime();
 
             UpdateDash(&P, dt);
@@ -129,6 +146,9 @@ int main(void)
                 state = Gameover;
             }
 
+            if (P.iframes > 0)
+                P.iframes -= dt;
+
             // camera lerping starts
             camera.target.x += (P.x - camera.target.x) * 6.0f * dt;
             camera.target.y += (P.y - camera.target.y) * 6.0f * dt;
@@ -138,8 +158,10 @@ int main(void)
             BeginDrawing();
             ClearBackground(BLACK);
             BeginMode2D(camera);
-
-            DrawRectangle(P.x, P.y, 100, 200, WHITE);
+            if (P.iframes > 0 && (int)(P.iframes * 10) % 2 == 0)
+                DrawRectangle(P.x, P.y, 100, 200, RED); // blinking during the invincibility frames
+            else
+                DrawRectangle(P.x, P.y, 100, 200, WHITE);
             for (int i = 0; i < bullCount; i++)
             {
                 if (bulls[i].alive == true)
@@ -160,20 +182,46 @@ int main(void)
             }
 
             EndMode2D();
-            DrawText(TextFormat("Dash Cooldown: %.1f", P.dashcooldown), 20, 20, 30, WHITE);
-            DrawText(TextFormat("Health: %.1f", P.health), 50, 50, 30, WHITE);
+            DrawText(TextFormat("Dash Cooldown: %.1f", P.dashcooldown), 20, 40, 30, WHITE);
+            DrawRectangle(20, 20, 200, 20, DARKGRAY);                       // health bar background grey
+            DrawRectangle(20, 20, 200 * (P.health / P.maxHealth), 20, RED); // foreground — width = maxWidth * (health / maxHealth)
             EndDrawing();
         }
+
         if (state == Gameover)
 
         {
+            if (IsKeyPressed(KEY_ENTER))
+            {
+                state = Mainmenu; // no type, just assignment
+                P.x = 200.0f;
+                P.y = 824.0f;
+                P.health = 100.0f;
+                P.velocityY = 0;
+                P.iframes = 0;
+                P.dashing = false;
+                P.onground = true;
+                P.doublejump = true;
+
+                en.alive = true;
+                en.x = 200.0f;
+                en.y = 200.0f;
+                en.spiritcollision = false;
+                en.knockbackduration = 0;
+
+                for (int i = 0; i < bullCount; i++)
+                {
+                    bulls[i].alive = true;
+                    bulls[i].health = 90.0f;
+                    bulls[i].state = Idle;
+                    bulls[i].speed = 100.0f;
+                }
+            }
             BeginDrawing();
             ClearBackground(BLACK);
             DrawText("GAME OVER", screen_w / 2 - 150, screen_h / 2, 50, RED);
-            DrawText("Press ENTER to restart is not working", screen_w / 2 - 150, screen_h / 2 + 60, 30, WHITE);
+            DrawText("Press ENTER to restart", screen_w / 2 - 150, screen_h / 2 + 60, 30, WHITE);
             EndDrawing();
-            if (IsKeyPressed(KEY_ENTER))
-                state = Mainmenu;
         }
     }
 
