@@ -1,7 +1,7 @@
 #ifndef TILEMAP_H
 #define TILEMAP_H
 
-#define TILE_SIZE 128
+#define TILE_SIZE 128 //ACTUAL TILE SIZE 128
 #define MAP_ROWS 17
 #define MAP_COLS 25
 #define LEVEL_COUNT 3

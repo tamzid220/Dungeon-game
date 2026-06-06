@@ -46,7 +46,12 @@ void CollisionX(Player *P, float dt)
                         P->health -= 10;
                         P->iframes = invincibility;
                     }
-                    P->spikeknkbacktimer = .25f;
+                    P->spikeknkbacktimer = .15f;
+
+                    P->velocityY = -3000;
+                    P->doublejump = true;
+                    P->x -= 10;
+
                     float overlapLeft = (P->x + 100) - spikeRect.x;
                     float overlapRight = (spikeRect.x + spikeRect.width) - P->x;
                     if (overlapLeft < overlapRight)
@@ -100,22 +105,6 @@ void CollisionY(Player *P)
                         P->y = tileRect.y + tileRect.height;
                         P->velocityY = 0;
                     }
-                }
-            }
-            if (maps[currentLevel][i][j] == 3)
-            {
-                Rectangle spikeRect = {j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE};
-                Rectangle playerRect = {P->x, P->y, 100, 200};
-                if (CheckCollisionRecs(playerRect, spikeRect))
-                {
-                    if (P->iframes <= 0)
-                    {
-                        P->health -= 10;
-                        P->iframes = invincibility;
-                    }
-                    P->velocityY = -3000;
-                    P->doublejump = true;
-                    P->x -= 10;
                 }
             }
         }

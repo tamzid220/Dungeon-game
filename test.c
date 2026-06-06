@@ -37,7 +37,7 @@ int main(void)
         0.0f,     // velocityY
         15,       // damage
         0.0f,     // attackcooldown
-        100.f,    // health
+        100.0f,    // health
         100.0f,   // maxhealth
         .5f,      // iframes
         true,     // onground
@@ -60,9 +60,9 @@ int main(void)
         0 // spiritcollision
     };
     Bull bulls[3] = {
-        {1000.0f, 1800.0f, 100.0f, 2000.0f, 3500.0f, 90.0f, 20.0f, 1, 15000.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1, 1, Idle, true},
-        {500.0f, 1800.0f, 100.0f, 2000.0f, 3500.0f, 90.0f, 20.0f, 1, 15000.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1, 1, Idle, true},
-        {1500.0f, 1800.0f, 100.0f, 2000.0f, 3500.0f, 90.0f, 20.0f, 1, 15000.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1, 1, Idle, true},
+        {1000.0f, 1800.0f, 100.0f, 2500.0f, 3500.0f, 90.0f, 20.0f, 1, 15000.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1, 1, Idle, true,1.0f},
+        {500.0f, 1800.0f, 100.0f, 1500.0f, 3500.0f, 90.0f, 20.0f, 1, 15000.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1, 1, Idle, true,0.5f},
+        {1500.0f, 1800.0f, 100.0f, 4000.0f, 3500.0f, 90.0f, 20.0f, 1, 25000.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1, 1, Idle, true,1.5f},
     };
     Mimic mimics[3] = {
         {600.0f, 1800.0f, 0.0f, 10000.0f, 0.0f, 100.0f, 15.0f, 0.0f, 1.0f, 0.0f, 1, MIdle, true, {0}, false, 0.0f, 0.0f, 1700.0f}, // add amx speed at the end
@@ -71,7 +71,7 @@ int main(void)
     };
     int mimicCount = 0;
     int mimicattaks[mimicCount];
-    int bullCount = 0; ////edited 0 for testing
+    int bullCount = 3; ////edited 0 for testing
 
     // float timer = 1; dont know what i used this for
 
@@ -87,7 +87,7 @@ int main(void)
     Camera2D camera = {0};
     camera.target = (Vector2){P.x, P.y};                        // what it looks at
     camera.offset = (Vector2){screen_w / 2 - 50, screen_h / 2}; // where on screen
-    camera.zoom = 0.8f;
+    camera.zoom = 0.6f;
 
     while (!WindowShouldClose())
     {

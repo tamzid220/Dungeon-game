@@ -172,7 +172,7 @@ void BullUpdateLogic(Bull *bn, Player *P, float dt, int AttackCheck, Rectangle *
 
     if (bn->state == Idle)
     {
-        if (fabs(P->y - bn->y) <= 250 && fabs(P->x - bn->x) <= 15 * TILE_SIZE)
+        if (fabs(P->y - bn->y) <= 350 && fabs(P->x - bn->x) <= 20 * TILE_SIZE)
         {
             bn->speed = 800.0f;
             bn->state = Charging;
@@ -201,7 +201,7 @@ void BullUpdateLogic(Bull *bn, Player *P, float dt, int AttackCheck, Rectangle *
         bn->turntimer -= dt;
         if (bn->turntimer <= 0)
         {
-            bn->turntimer = 1.0f;
+            bn->turntimer = bn->maxturntimer;
             bn->state = Idle;
         }
     }
@@ -213,6 +213,7 @@ void BullUpdateLogic(Bull *bn, Player *P, float dt, int AttackCheck, Rectangle *
     {
         if (CheckCollisionRecs(bullrect, playerrect))
         {
+            P->doublejump=true;
             if (P->iframes <= 0)
             {
                 P->health -= bn->damage;

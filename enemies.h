@@ -35,6 +35,7 @@ typedef struct
     int   collisiondirection;
     Bullstate state;
     bool  alive;
+    float maxturntimer;
 } Bull;
 
 typedef struct

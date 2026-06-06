@@ -72,14 +72,21 @@ int UpdateAttack(Player *P, float dt, Rectangle *AttackRect)
     if (IsKeyPressed(KEY_BACKSPACE) && P->attackcooldown <= 0)
     {
         P->attackcooldown = .25;
-        if (P->dashflag == -1)
+        if (IsKeyDown(KEY_W))
+        {
+            AttackRect->x = P->x - 100;
+            AttackRect->y = P->y-200;
+            AttackRect->height = 200;
+            AttackRect->width = 300;
+        }
+        else if (P->dashflag == -1)
         {
             AttackRect->x = P->x - 200;
             AttackRect->y = P->y;
             AttackRect->height = 200;
             AttackRect->width = 200;
         }
-        if (P->dashflag == 1)
+        else if (P->dashflag == 1)
         {
             AttackRect->x = P->x + 100;
             AttackRect->y = P->y;

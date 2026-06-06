@@ -96,6 +96,7 @@ int UpdateMimicLogic(Mimic *M, Player *P, float dt, int attackcheck, Rectangle *
             }
             M->mstate = MIdle;
             M->speed = 0;
+            P->doublejump=true;
 
             float overlapright = fabsf(P->x - (M->x + 100));
             float overlapleft = fabsf(M->x - (P->x + 100));
@@ -124,11 +125,11 @@ int UpdateMimicLogic(Mimic *M, Player *P, float dt, int attackcheck, Rectangle *
     {
         M->mstate = MCharging;
     }
-    else if (fabs(P->x - M->x) < 10 * TILE_SIZE)
+    else if (fabs(P->x - M->x) < 10 * TILE_SIZE && fabs(P->y - M->y) < 3 * TILE_SIZE)
     {
         M->mstate = MChasing;
     }
-    else if (fabs(P->x - M->x) > 10 * TILE_SIZE)
+    else
     {
         M->mstate = MIdle;
     }
@@ -166,6 +167,7 @@ int UpdateMimicLogic(Mimic *M, Player *P, float dt, int attackcheck, Rectangle *
                 M->attackrect.height = 200;
                 M->attackrect.width = 200;
             }
+            M->mstate=MIdle;
         }
     }
 
@@ -199,7 +201,7 @@ int UpdateMimicLogic(Mimic *M, Player *P, float dt, int attackcheck, Rectangle *
         {
             P->x -= 3000 * P->dashflag * dt;
             M->x += 3000 * P->dashflag * dt;
-            M->knockbackduration-=dt;
+            M->knockbackduration -= dt;
         }
     }
     return attackcheckmimic;
