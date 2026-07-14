@@ -28,7 +28,7 @@ int main(void)
     Gamestate state = Mainmenu;
     Player P = {
         200.0f,    // x
-        1000.0f,   // speed
+        1200.0f,   // speed
         0.2f,      // dashtimer
         1,         // dashflag
         0.0f,      // dashcooldown
@@ -87,18 +87,18 @@ int main(void)
 
     int mimicCount = 0;
     int mimicattaks[mimicCount];
-    int bullCount = 3; ////edited 0 for testing
+    int bullCount = 0; ////edited 0 for testing
 
     Dragon dragon = {
         1500.0f, // x
         500.0f,  // y
-        50.0f,  // health (set below)
+        50.0f,   // health (set below)
         30.0f,   // damage
         0.0f,    // chargetimer
         1.0f,    // maxchargetimer
         0.0f,    // attacktimer
         3.0f,    // maxattacktimer
-        false,    // alive
+        false,   // alive
         1,       // direction
         Didle,   // dstate
         {0},     // firerect
@@ -106,7 +106,7 @@ int main(void)
         0.0f,    // playerknockbacktimer
         0.0f,    // playerecoil
         0,       // recoildirection
-        1000.0f,  // speed
+        1000.0f, // speed
         500.0f,  // attackspeed
         0.0f,    // wallDropSpeed
     };
@@ -210,9 +210,11 @@ int main(void)
             UpdateArrows(arrows, MAX_ARROWS, &P, dt);
 
             for (int i = 0; i < totemCount; i++)
+            {
+                TotemCollision(&totems[i], &P);
                 UpdateTotemLogic(&totems[i], &P, dt, AttackCheck, &AttackRect, homingBullets, MAX_HOMING_BULLETS);
-
-            UpdateHomingBullets(homingBullets, MAX_HOMING_BULLETS, &P, dt,AttackCheck,&AttackRect);
+            }
+            UpdateHomingBullets(homingBullets, MAX_HOMING_BULLETS, &P, dt, AttackCheck, &AttackRect);
 
             spiritupdate(&en, &P, dt);
 
@@ -286,7 +288,7 @@ int main(void)
             }
             if (dragon.alive)
                 DrawRectangle(dragon.x, dragon.y, 300, 200, DARKGREEN);
-            if (dragon.dstate == Dattacking && dragon.alive==true)
+            if (dragon.dstate == Dattacking && dragon.alive == true)
                 DrawRectangleRec(dragon.firerect, ORANGE);
             for (int i = 0; i < MAX_ARROWS; i++)
             {

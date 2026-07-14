@@ -43,14 +43,19 @@ void UpdateJump(Player *P, float dt)
     // jump starts
     if (P->onground && IsKeyPressed(KEY_SPACE))
     {
-        P->velocityY = -3000.0f;
+        P->velocityY = -3200.0f;
         P->onground = false;
     }
     else if (!P->onground && P->doublejump && IsKeyPressed(KEY_SPACE))
     {
-        P->velocityY = -3000.0f;
+        P->velocityY = -3200.0f;
         P->doublejump = false;
     }
+    if(IsKeyReleased(KEY_SPACE) && P->velocityY<0)
+    {
+        P->velocityY*=0.15f;
+    }
+
     // jump ends
 }
 

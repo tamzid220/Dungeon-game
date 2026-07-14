@@ -160,6 +160,8 @@ typedef struct
     float maxattacktimer;
     bool alive;
     float knockbackduration;
+    float playerecoil;
+    int recoildirection;
 } Totem;
 
 typedef struct
@@ -192,4 +194,6 @@ void DragonCollisionX(Dragon *D, float dt);
 void DragonCollisionY(Dragon *D);
 void UpdateTotemLogic(Totem *T, Player *P, float dt, int attackcheck, Rectangle *AttackRect, HomingBullet *bullets, int bulletCount);
 void UpdateHomingBullets(HomingBullet *bullets, int count, Player *P, float dt,int attackcheck,Rectangle *Attackrect);
+void TotemCollision(Totem *T, Player *P);
+
 #endif

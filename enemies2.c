@@ -469,10 +469,23 @@ void UpdateTotemLogic(Totem *T, Player *P, float dt, int attackcheck, Rectangle 
         {
             T->health -= P->damage;
             T->knockbackduration = .01f;
+
+            if (P->x > T->x)
+                T->recoildirection = 1;
+            else
+                T->recoildirection = -1;
+
+            T->playerecoil = 0.1f;
         }
     }
     if (T->knockbackduration > 0)
         T->knockbackduration -= dt;
+
+    if (T->playerecoil > 0)
+    {
+        T->playerecoil -= dt;
+        P->x += 1500 * T->recoildirection * dt;
+    }
 
     T->attacktimer -= dt;
     if (T->attacktimer <= 0)
@@ -491,6 +504,49 @@ void UpdateTotemLogic(Totem *T, Player *P, float dt, int attackcheck, Rectangle 
                 bullets[i].damage = T->damage;
                 bullets[i].alive = true;
                 break;
+            }
+        }
+    }
+}
+
+void TotemCollision(Totem *T, Player *P)
+{
+    if (T->alive == false)
+        return;
+
+    Rectangle totemRect = {T->x, T->y, 100, 150};
+    Rectangle playerRect = {P->x, P->y, 100, 200};
+
+    if (CheckCollisionRecs(playerRect, totemRect) && P->dashing==false)
+    {
+        float overlapLeft = (P->x + 100) - totemRect.x;
+        float overlapRight = (totemRect.x + totemRect.width) - P->x;
+        float overlapTop = (P->y + 200) - totemRect.y;
+        float overlapBottom = (totemRect.y + totemRect.height) - P->y;
+
+        float minX = (overlapLeft < overlapRight) ? overlapLeft : overlapRight;
+        float minY = (overlapTop < overlapBottom) ? overlapTop : overlapBottom;
+
+        if (minX < minY)
+        {
+            if (overlapLeft < overlapRight)
+                P->x = totemRect.x - 100;
+            else
+                P->x = totemRect.x + totemRect.width;
+        }
+        else
+        {
+            if (overlapTop < overlapBottom)
+            {
+                P->y = totemRect.y - 200;
+                P->velocityY = 0;
+                P->onground = true;
+                P->doublejump = true;
+            }
+            else
+            {
+                P->y = totemRect.y + totemRect.height;
+                P->velocityY = 0;
             }
         }
     }
@@ -557,6 +613,28 @@ void UpdateHomingBullets(HomingBullet *bullets, int count, Player *P, float dt, 
         {
             if (P->iframes <= 0)
             {
+                float overlapright = fabsf(P->x - (bullets[i].x + 15));
+                float overlapleft = fabsf((bullets[i].x - 15) - (P->x + 100));
+                float overlaptop = fabsf((P->y + 200) - (bullets[i].y - 15));
+                float overlapbottom = fabsf((bullets[i].y + 15) - P->y);
+
+                float minOverlap = fminf(fminf(overlapleft, overlapright), fminf(overlaptop, overlapbottom));
+
+                if (minOverlap == overlapleft)
+                {
+                    P->spikeknkdirection = -1;
+                    P->spikeknkbacktimer = 0.12f;
+                }
+                if (minOverlap == overlapright)
+                {
+                    P->spikeknkdirection = 1;
+                    P->spikeknkbacktimer = 0.12f;
+                }
+                if (minOverlap == overlaptop)
+                    P->velocityY = -1200.0f;
+                if (minOverlap == overlapbottom)
+                    P->velocityY = 1200.0f;
+
                 P->health -= bullets[i].damage;
                 P->iframes = invincibility;
             }

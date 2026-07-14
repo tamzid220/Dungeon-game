@@ -53,23 +53,25 @@ void CollisionX(Player *P)
 
                     P->velocityY = -3000;
                     P->doublejump = true;
-                    P->x -= 10;
+                    // P->x -= 10;
 
                     float overlapLeft = (P->x + 100) - spikeRect.x;
                     float overlapRight = (spikeRect.x + spikeRect.width) - P->x;
                     if (overlapLeft < overlapRight)
                     {
+                        P->x -= 10;
                         P->spikeknkdirection = -1;
                         P->dashing = false;
                         P->dashtimer = 0.15f; // match the normal end-of-dash reset
-                        // P->dashcooldown += 0.25f;
+                        P->dashcooldown = 0.5f;
                     }
                     else
                     {
+                        P->x += 10;
                         P->spikeknkdirection = 1;
                         P->dashing = false;
                         P->dashtimer = 0.15f; // match the normal end-of-dash reset
-                        // P->dashcooldown += 0.25f;
+                        P->dashcooldown = 0.5f;
                     }
                 }
             }
